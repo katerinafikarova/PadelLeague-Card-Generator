@@ -1,0 +1,264 @@
+:root {
+  --midnight-court: #05070a;
+  --neon-strike: #e2ff00;
+  --marbella-blue: #007bff;
+  --line-white: #ffffff;
+  --secondary-gray: #333333;
+  --border-gray: #222222;
+}
+
+/* Reset + full-screen centering */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px; /* space between phone and controls */
+  background: #000;
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    "Helvetica Neue",
+    Arial;
+  color: var(--line-white);
+  padding: 24px;
+}
+
+/* Outer wrapper to constrain layout on wide screens */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 920px;
+}
+
+/* Phone simulator (main container) */
+.padel-generator {
+  position: relative;
+  width: 100%;
+  max-width: 400px; /* simulates phone width */
+  height: 800px; /* simulates phone height */
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65);
+  background-image: url("https://images.unsplash.com/photo-1622279457486-62dcc4a631d6?w=1200&q=80&auto=format&fit=crop");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* preview container fills the phone and centers the card */
+.preview-container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* base image (user uploaded) fills background layer */
+.base-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.7) contrast(1.6) saturate(2.2);
+}
+
+/* overlays */
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.overlay-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='400' height='400' fill='white' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+  opacity: 0.25;
+}
+.overlay-grid {
+  background-image:
+    linear-gradient(0deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.15;
+}
+.overlay-tint {
+  background: linear-gradient(
+    135deg,
+    rgba(5, 7, 10, 0.6) 0%,
+    rgba(226, 255, 0, 0.12) 50%,
+    rgba(5, 7, 10, 0.45) 100%
+  );
+  mix-blend-mode: hard-light;
+  opacity: 0.8;
+}
+
+.hidden {
+  display: none;
+}
+
+/* Glass card — centered inside preview; width 85% per requirement */
+.result-card {
+  width: 85%;
+  max-width: 340px;
+  box-sizing: border-box;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 22px;
+  padding: 32px 56px 56px 28px; /* extra right/bottom padding to reserve space for badge */
+  position: relative;
+  z-index: 30;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  text-align: left;
+}
+
+.player-name {
+  font-family: "Bungee", cursive;
+  font-size: 26px;
+  margin-bottom: 8px;
+  letter-spacing: 1.5px;
+}
+.info-label {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.info-value {
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.info-value.winner {
+  font-size: 44px;
+  color: var(--neon-strike);
+  line-height: 1.05;
+  text-shadow: 0 0 12px rgba(226, 255, 0, 0.35);
+}
+
+/* Badge: positioned inside card bottom-right but outside main text due to padding above */
+.badge-container {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  width: 100px;
+  height: 100px;
+  pointer-events: none;
+}
+.badge-circle {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--midnight-court);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  font-size: 18px;
+  margin-left: auto;
+  margin-top: auto;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+.curved-text-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.curved-text-svg text {
+  font-size: 12px;
+  fill: #fff;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+/* Controls panel below phone simulator */
+.controls-panel {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(135deg, var(--midnight-court), #0f1217);
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.control-label {
+  font-size: 11px;
+  color: #999;
+  text-transform: uppercase;
+}
+.file-input,
+.text-input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-gray);
+  background: var(--secondary-gray);
+  color: var(--line-white);
+}
+.toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.toggle-btn {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border-gray);
+  background: transparent;
+  color: var(--line-white);
+  cursor: pointer;
+  font-weight: 700;
+}
+.toggle-btn.active {
+  background: var(--neon-strike);
+  color: #000;
+  box-shadow: 0 0 12px rgba(226, 255, 0, 0.28);
+}
+.slider-input {
+  width: 100%;
+}
+
+/* Responsive tweaks */
+@media (max-width: 520px) {
+  body {
+    padding: 12px;
+  }
+  .padel-generator {
+    height: 720px;
+  }
+  .result-card {
+    padding: 26px 48px 48px 20px;
+  }
+  .badge-container {
+    width: 86px;
+    height: 86px;
+  }
+}

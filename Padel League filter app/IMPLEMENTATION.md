@@ -1,166 +1,85 @@
-# PadelLeague Card Generator - Complete Implementation
+# PadelLeague Card Generator — Implementace
 
-## ✅ Project Created Successfully
+Aplikace je čistě statická vanilla HTML/CSS/JavaScript. Žádný build krok, žádné závislosti, žádné `node_modules`.
 
-Your React + TypeScript + Vite project is ready with a fully featured Padel Card Generator component.
+## Soubory
 
-### What's Been Created
+### `index.html`
 
-#### 1. **Core React Component** (`src/PadelCardGenerator.tsx`)
+HTML struktura aplikace:
 
-- Upload image functionality with file input
-- Real-time state management for filters and player data
-- Advanced filter controls (Grain, Grid, Blur, Tint)
-- Responsive preview container
-- Result card with smooth animations
+- `<head>` — meta, title, Google Fonts (Inter, Bungee), `<link>` na `styles.css`
+- `<body>` — `.app-wrapper` s telefon-simulátorem nahoře a `.controls-panel` pod ním
+- `<svg>` s `<filter id="motion-blur">` definovaným v rootu telefon-simulátoru — používá se přes `filter: url(#motion-blur)` na obrázku
+- `<script src="./app.js" defer>` před `</body>`
 
-#### 2. **Professional Styling** (`src/PadelCardGenerator.css`)
+### `styles.css`
 
-- CSS custom properties for brand colors
-- Glassmorphism effects on result card
-- Responsive design (desktop, tablet, mobile)
-- Smooth animations and transitions
-- Modern filter controls UI
+Veškeré styly:
 
-#### 3. **Configuration Files**
+- CSS proměnné v `:root` (paleta)
+- Reset (`*`, `html`, `body`)
+- Layout: `.app-wrapper`, `.padel-generator` (telefon 400×800), `.preview-container`, `.base-image`
+- Overlays: `.overlay`, `.overlay-grain` (SVG noise), `.overlay-grid` (linear-gradient mřížka), `.overlay-tint` (diagonální gradient + `mix-blend-mode: hard-light`)
+- Karta: `.result-card` (glassmorphism), `.player-name`, `.info-label`, `.info-value`, `.info-value.winner`
+- Badge: `.badge-container`, `.badge-circle`, `.curved-text-svg`
+- Controls: `.controls-panel`, `.control-group`, `.toggle-btn`, `.toggle-btn.active`, `.slider-input`
+- `@media (max-width: 520px)` — zmenšení telefon-simulátoru a badge
 
-- `vite.config.ts` - Vite build configuration with React plugin
-- `tsconfig.json` - TypeScript strict mode configuration
-- `package.json` - Dependencies and npm scripts
+### `app.js`
 
-#### 4. **Entry Points**
+Logika aplikace:
 
-- `index.html` - HTML entry point with Google Fonts
-- `src/main.tsx` - React DOM render
-- `src/App.tsx` - App wrapper component
-- `src/index.css` - Global styles
+- `state.filters` — single source of truth: `{ grain, grid, blur, tint }`
+- DOM reference na image, overlay divy, badge text a controls
+- `toggleFilter(name)` — pro `blur` přepíná mezi 0 a 3, pro ostatní toggluje boolean
+- `applyFilters()` — staví CSS `filter` string pro obrázek (`brightness(.7) contrast(1.6) saturate(2.2)` + případně `url(#motion-blur)`); skrývá/odkrývá overlay divy přes `.hidden`
+- `updateMotionBlur(v)` — nastaví `stdDeviation="${v*2} 0"` na `<feGaussianBlur>` (horizontální motion blur)
+- `updateButtonVisuals()` — togluje `.active` na tlačítkách filtrů
+- `updateCard()` — zapisuje upper-case hodnoty inputů do karty a `${won}/${tot}` do badge
+- Event listenery: tlačítka, slider, file upload (FileReader → data URL → `img.src`), inputy
+- Inicializace na konci souboru
 
-### Features Implemented
+## Datové toky
 
-#### Image Filters
-
-✅ Brightness (0.7) - Default brightness reduction
-✅ Contrast (1.2) - Enhanced contrast
-✅ Blur (0-10px) - Adjustable blur with slider
-✅ Grain - SVG noise texture overlay
-✅ Grid - 12-column pattern overlay (30x30px)
-✅ Tint - Dark overlay (#05070A) with multiply blend
-
-#### Result Card
-
-✅ Player Name - Large bold Bungee font (unicase style)
-✅ Skill Level - Neon green display (#E2FF00)
-✅ Match Result - Victory/Defeat/Draw selector
-✅ Glassmorphic design - Backdrop blur effect
-✅ Smooth animation - Slide-up entrance animation
-
-#### UI Controls
-
-✅ Image upload input
-✅ Filter toggle buttons (4 total)
-✅ Blur intensity slider (0-10)
-✅ Player data input fields
-✅ Match result dropdown
-
-#### Branding
-
-✅ PadelLeague logo badge - Top-right corner
-✅ Neon yellow styling - Professional look
-✅ Responsive layout - Works on all devices
-
-### Color Palette
-
-```css
---midnight-court: #05070a /* Dark backgrounds */ --neon-strike: #e2ff00
-  /* Neon yellow accents */ --marbella-blue: #007bff /* Blue overlays */
-  --line-white: #ffffff /* Primary text */ --success-green: #00ff00
-  /* Success states */;
-```
-
-### Next Steps
-
-1. **Install Dependencies**
-
-   ```bash
-   cd /Users/katerinafikarova/Desktop/Padel\ League\ filter\ ap
-   npm install
-   ```
-
-2. **Start Development Server**
-
-   ```bash
-   npm run dev
-   ```
-
-   Visit: http://localhost:5173
-
-3. **Build for Production**
-   ```bash
-   npm run build
-   ```
-
-### File Structure
+### Toggle filtru
 
 ```
-Padel League filter ap/
-├── .github/
-│   └── copilot-instructions.md    # Project documentation
-├── src/
-│   ├── PadelCardGenerator.tsx      # Main component
-│   ├── PadelCardGenerator.css      # Styling
-│   ├── App.tsx                     # App wrapper
-│   ├── main.tsx                    # Entry point
-│   └── index.css                   # Global styles
-├── index.html                      # HTML template
-├── vite.config.ts                  # Vite config
-├── tsconfig.json                   # TypeScript config
-├── package.json                    # Dependencies
-├── README.md                        # Documentation
-└── .gitignore                      # Git ignore rules
+button click → toggleFilter(name) → state.filters mutated → applyFilters() + updateButtonVisuals()
 ```
 
-### Component Usage
+### Změna intenzity blur
 
-The component is self-contained and ready to use:
-
-```tsx
-import PadelCardGenerator from "./PadelCardGenerator";
-
-export default function App() {
-  return <PadelCardGenerator />;
-}
+```
+range input → state.filters.blur set → updateMotionBlur(v) → SVG <feGaussianBlur stdDeviation> → applyFilters() (přidá url(#motion-blur) do CSS filter)
 ```
 
-### Customization
+### Upload obrázku
 
-**Change Filter Defaults:**
-Edit the `getImageFilters()` function in `PadelCardGenerator.tsx`
+```
+file input change → FileReader.readAsDataURL → img.src = data URL
+```
 
-**Adjust Grid Size:**
-Modify `background-size: 30px 30px` in `PadelCardGenerator.css`
+### Změna textu karty
 
-**Change Fonts:**
-Update Google Fonts import in `index.html`
+```
+input/select change → updateCard() → textContent na #display-* a #badge-text
+```
 
-**Modify Colors:**
-Edit CSS custom properties in `:root` selector in `PadelCardGenerator.css`
+## Spuštění
 
-### Browser Support
+```bash
+open index.html
+```
 
-✅ Chrome/Chromium (latest)
-✅ Firefox (latest)
-✅ Safari (latest)
-✅ Edge (latest)
-✅ Mobile browsers
+Nebo `npx serve .` pro lokální server.
 
-### Performance Features
+## Rozšiřitelnost
 
-- GPU-accelerated CSS filters
-- Efficient React state management
-- SVG-based grain texture (no image files)
-- CSS gradients for grid overlay
-- Optimized animations with CSS transitions
+Přidání dalšího filtru:
 
----
-
-**Ready to launch!** 🚀 Run `npm install` and `npm run dev` to see your Padel Card Generator in action.
+1. Doplnit do `state.filters` (default `false`).
+2. V [styles.css](styles.css) přidat třídu `.overlay-<name>` se stylem.
+3. V [index.html](index.html) přidat `<div id="filter-<name>" class="overlay overlay-<name> hidden"></div>` do `.preview-container`.
+4. V [index.html](index.html) přidat `<button id="btn-<name>" class="toggle-btn">` do `.toggle-grid`.
+5. V [app.js](app.js) doplnit DOM referenci, listener `btn<Name>.addEventListener("click", () => toggleFilter("<name>"))`, a v `applyFilters()` + `updateButtonVisuals()` zpracovat nový klíč.
