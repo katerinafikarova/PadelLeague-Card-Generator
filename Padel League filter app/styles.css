@@ -52,6 +52,7 @@ body {
   width: 100%;
   max-width: 400px; /* simulates phone width */
   height: 800px; /* simulates phone height */
+  margin-top: 200px;
   border-radius: 20px;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -74,13 +75,13 @@ body {
   padding: 20px;
 }
 
-/* base image (user uploaded) fills background layer */
+/* base image (user uploaded) — full image visible inside the preview */
 .base-image {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   filter: brightness(0.7) contrast(1.6) saturate(2.2);
 }
 
@@ -92,14 +93,14 @@ body {
 }
 .overlay-grain {
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='400' height='400' fill='white' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
-  opacity: 0.25;
+  opacity: 0.85;
 }
 .overlay-grid {
   background-image:
-    linear-gradient(0deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    linear-gradient(0deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
   background-size: 30px 30px;
-  opacity: 0.15;
+  opacity: 0.5;
 }
 .overlay-tint {
   background: linear-gradient(
@@ -125,7 +126,7 @@ body {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-radius: 22px;
-  padding: 32px 56px 56px 28px; /* extra right/bottom padding to reserve space for badge */
+  padding: 28px 24px 70px 24px;
   position: relative;
   z-index: 30;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -133,28 +134,56 @@ body {
   text-align: left;
 }
 
+.card-logo {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  width: 32px;
+  height: 32px;
+  pointer-events: none;
+  opacity: 0.9;
+}
+.card-logo svg {
+  width: 100%;
+  height: 100%;
+}
+
+.info-group {
+  margin-bottom: 16px;
+}
+.info-group:last-of-type {
+  margin-bottom: 0;
+}
+
 .player-name {
   font-family: "Bungee", cursive;
-  font-size: 26px;
-  margin-bottom: 8px;
-  letter-spacing: 1.5px;
+  font-size: 32px;
+  letter-spacing: 1px;
+  line-height: 1.05;
 }
 .info-label {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.7);
   text-transform: uppercase;
-  margin-bottom: 4px;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
 }
 .info-value {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 800;
   text-transform: uppercase;
+  line-height: 1.1;
+}
+.info-value.score {
+  font-size: 52px;
+  letter-spacing: 0.5px;
+  line-height: 1;
 }
 .info-value.winner {
-  font-size: 44px;
-  color: var(--neon-strike);
-  line-height: 1.05;
-  text-shadow: 0 0 12px rgba(226, 255, 0, 0.35);
+  font-size: 56px;
+  color: #fff;
+  line-height: 1;
+  text-shadow: 0 0 14px rgba(255, 255, 255, 0.25);
 }
 
 /* Badge: positioned inside card bottom-right but outside main text due to padding above */
@@ -255,7 +284,19 @@ body {
     height: 720px;
   }
   .result-card {
-    padding: 26px 48px 48px 20px;
+    padding: 24px 20px 60px 20px;
+  }
+  .player-name {
+    font-size: 28px;
+  }
+  .info-value {
+    font-size: 20px;
+  }
+  .info-value.score {
+    font-size: 44px;
+  }
+  .info-value.winner {
+    font-size: 48px;
   }
   .badge-container {
     width: 86px;

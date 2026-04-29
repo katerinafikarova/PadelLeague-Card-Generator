@@ -78,11 +78,22 @@ function updateCard() {
   document.getElementById("display-name").textContent = (
     document.getElementById("name-input").value || ""
   ).toUpperCase();
-  document.getElementById("display-level").textContent = (
-    document.getElementById("level-input").value || ""
+  document.getElementById("display-event").textContent = (
+    document.getElementById("event-input").value || ""
   ).toUpperCase();
+  const date = (
+    document.getElementById("event-date-input").value || ""
+  ).toUpperCase();
+  const city = (
+    document.getElementById("event-city-input").value || ""
+  ).toUpperCase();
+  document.getElementById("display-event-details").textContent = [date, city]
+    .filter(Boolean)
+    .join(" • ");
+  document.getElementById("display-score").textContent =
+    document.getElementById("score-input").value || "";
   document.getElementById("display-result").textContent =
-    document.getElementById("result-input").value || "VICTORY";
+    document.getElementById("result-input").value || "WINNER!";
   const won =
     parseInt(document.getElementById("matches-won-input").value, 10) || 0;
   const tot = Math.max(
@@ -107,7 +118,10 @@ document.getElementById("upload").addEventListener("change", (e) => {
 // Inputs change listeners
 [
   "name-input",
-  "level-input",
+  "event-input",
+  "event-date-input",
+  "event-city-input",
+  "score-input",
   "result-input",
   "matches-won-input",
   "matches-total-input",
