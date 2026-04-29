@@ -1,0 +1,434 @@
+/* ===== CSS Variables ===== */
+:root {
+  --midnight-court: #05070a;
+  --neon-strike: #e2ff00;
+  --marbella-blue: #007bff;
+  --line-white: #ffffff;
+  --success-green: #00ff00;
+  --secondary-gray: #333333;
+  --border-gray: #222222;
+}
+
+/* ===== Global Styles ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: #000;
+  color: var(--line-white);
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  overflow-x: hidden;
+}
+
+/* ===== Main Container ===== */
+.padel-generator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #000 0%, #0a0a0a 100%);
+  padding: 20px;
+}
+
+/* ===== Controls Panel ===== */
+.controls-panel {
+  background: linear-gradient(135deg, var(--midnight-court) 0%, #0f1217 100%);
+  border: 1px solid var(--border-gray);
+  border-radius: 8px;
+  padding: 30px;
+  width: 100%;
+  max-width: 420px;
+  margin-bottom: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--marbella-blue);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title-icon {
+  font-size: 28px;
+}
+
+/* ===== Control Group ===== */
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.control-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #888;
+}
+
+/* ===== File Input ===== */
+.file-input {
+  padding: 12px;
+  background: var(--secondary-gray);
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+  color: var(--line-white);
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.file-input:hover {
+  background: #444;
+  border-color: var(--marbella-blue);
+}
+
+/* ===== Text Input ===== */
+.text-input {
+  padding: 12px;
+  background: var(--secondary-gray);
+  border: 1px solid var(--border-gray);
+  border-radius: 4px;
+  color: var(--line-white);
+  font-size: 13px;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  background: #444;
+  border-color: var(--neon-strike);
+  box-shadow: 0 0 8px rgba(226, 255, 0, 0.2);
+}
+
+/* ===== Slider Input ===== */
+.slider-input {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--secondary-gray);
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--neon-strike);
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(226, 255, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+.slider-input::-webkit-slider-thumb:hover {
+  width: 22px;
+  height: 22px;
+  box-shadow: 0 0 12px rgba(226, 255, 0, 0.5);
+}
+
+.slider-input::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--neon-strike);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 8px rgba(226, 255, 0, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* ===== Toggle Buttons Grid ===== */
+.toggle-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.toggle-btn {
+  padding: 10px 12px;
+  background: var(--secondary-gray);
+  border: 2px solid var(--border-gray);
+  border-radius: 4px;
+  color: var(--line-white);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+  border-color: var(--marbella-blue);
+  background: #444;
+}
+
+.toggle-btn.active {
+  background: var(--neon-strike);
+  color: #000;
+  border-color: var(--neon-strike);
+  box-shadow: 0 0 12px rgba(226, 255, 0, 0.4);
+}
+
+/* ===== Preview Wrapper ===== */
+.preview-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+}
+
+/* ===== Preview Container ===== */
+.preview-container {
+  position: relative;
+  width: 360px;
+  height: 640px;
+  background: var(--midnight-court);
+  overflow: hidden;
+  border: 2px solid var(--border-gray);
+  border-radius: 12px;
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.7),
+    0 0 40px rgba(226, 255, 0, 0.1);
+}
+
+/* ===== Base Image ===== */
+.base-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: filter 0.3s ease;
+}
+
+/* ===== Overlay Styles ===== */
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Grain Overlay */
+.overlay-grain {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3CfeColorMatrix type='saturate' values='0' /%3E%3C/filter%3E%3Crect width='400' height='400' fill='white' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  opacity: 0.3;
+}
+
+/* Grid Overlay */
+.overlay-grid {
+  background-size: 30px 30px;
+  opacity: 0.2;
+}
+
+/* Tint Overlay */
+.overlay-tint {
+  background: var(--midnight-court);
+  mix-blend-mode: multiply;
+  opacity: 0.35;
+}
+
+/* ===== Noise SVG ===== */
+.noise-svg {
+  display: none;
+}
+
+/* ===== Logo Badge ===== */
+.logo-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: rgba(226, 255, 0, 0.9);
+  color: #000;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(226, 255, 0, 0.3);
+}
+
+.logo-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ===== Result Card ===== */
+.result-card {
+  position: absolute;
+  bottom: 30px;
+  left: 20px;
+  right: 20px;
+  background: rgba(5, 7, 10, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 6px;
+  padding: 20px;
+  border-left: 5px solid var(--neon-strike);
+  z-index: 30;
+  animation: slideUp 0.6s ease-out;
+  box-shadow:
+    0 8px 24px rgba(0, 0, 0, 0.6),
+    inset 0 0 20px rgba(226, 255, 0, 0.05);
+}
+
+.card-inner {
+  position: relative;
+  z-index: 1;
+}
+
+.card-border-accent {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, var(--neon-strike) 0%, transparent 100%);
+  opacity: 0.3;
+}
+
+/* ===== Player Name ===== */
+.player-name {
+  font-family: "Bungee", cursive;
+  font-size: 26px;
+  font-weight: 800;
+  margin: 0 0 10px 0;
+  color: var(--line-white);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  line-height: 1.2;
+}
+
+/* ===== Player Stats ===== */
+.player-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.stat-level {
+  color: var(--neon-strike);
+  text-shadow: 0 0 8px rgba(226, 255, 0, 0.3);
+  font-weight: 800;
+}
+
+.stat-separator {
+  color: #666;
+  opacity: 0.6;
+}
+
+.stat-result {
+  color: var(--success-green);
+  text-shadow: 0 0 8px rgba(0, 255, 0, 0.2);
+  font-weight: 800;
+}
+
+/* ===== Animations ===== */
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ===== Responsive Design ===== */
+@media (max-width: 768px) {
+  .padel-generator {
+    padding: 15px;
+  }
+
+  .controls-panel {
+    max-width: 100%;
+    padding: 20px;
+  }
+
+  .preview-container {
+    width: 100%;
+    max-width: 100%;
+    aspect-ratio: 9 / 16;
+    height: auto;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .player-name {
+    font-size: 22px;
+  }
+
+  .player-stats {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  .controls-panel {
+    padding: 15px;
+  }
+
+  .toggle-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .player-name {
+    font-size: 20px;
+  }
+
+  .result-card {
+    bottom: 20px;
+    left: 15px;
+    right: 15px;
+    padding: 15px;
+  }
+
+  .logo-badge {
+    font-size: 8px;
+    padding: 4px 8px;
+  }
+}

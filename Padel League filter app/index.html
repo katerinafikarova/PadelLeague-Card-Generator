@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>PadelLeague Card Generator — Fixed Layout</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Bungee&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --midnight-court: #05070a;
+        --neon-strike: #e2ff00;
+        --marbella-blue: #007bff;
+        --line-white: #ffffff;
+        --secondary-gray: #333333;
+        --border-gray: #222222;
+      }
+
+      /* Reset + full-screen centering */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 28px; /* space between phone and controls */
+        background: #000;
+        font-family:
+          Inter,
+          system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          "Helvetica Neue",
+          Arial;
+        color: var(--line-white);
+        padding: 24px;
+      }
+
+      /* Outer wrapper to constrain layout on wide screens */
+      .app-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        width: 100%;
+        max-width: 920px;
+      }
+
+      /* Phone simulator (main container) */
+      .padel-generator {
+        position: relative;
+        width: 100%;
+        max-width: 400px; /* simulates phone width */
+        height: 800px; /* simulates phone height */
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65);
+        background-image: url("https://images.unsplash.com/photo-1622279457486-62dcc4a631d6?w=1200&q=80&auto=format&fit=crop");
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* preview container fills the phone and centers the card */
+      .preview-container {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      /* base image (user uploaded) fills background layer */
+      .base-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.7) contrast(1.6) saturate(2.2);
+      }
+
+      /* overlays */
+      .overlay {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+      }
+      .overlay-grain {
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.9' numOctaves='3' /%3E%3C/filter%3E%3Crect width='400' height='400' fill='white' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+        opacity: 0.25;
+      }
+      .overlay-grid {
+        background-image:
+          linear-gradient(0deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+        background-size: 30px 30px;
+        opacity: 0.15;
+      }
+      .overlay-tint {
+        background: linear-gradient(
+          135deg,
+          rgba(5, 7, 10, 0.6) 0%,
+          rgba(226, 255, 0, 0.12) 50%,
+          rgba(5, 7, 10, 0.45) 100%
+        );
+        mix-blend-mode: hard-light;
+        opacity: 0.8;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      /* Glass card — centered inside preview; width 85% per requirement */
+      .result-card {
+        width: 85%;
+        max-width: 340px;
+        box-sizing: border-box;
+        background: rgba(0, 0, 0, 0.45);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 22px;
+        padding: 32px 56px 56px 28px; /* extra right/bottom padding to reserve space for badge */
+        position: relative;
+        z-index: 30;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+        text-align: left;
+      }
+
+      .player-name {
+        font-family: "Bungee", cursive;
+        font-size: 26px;
+        margin-bottom: 8px;
+        letter-spacing: 1.5px;
+      }
+      .info-label {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        margin-bottom: 4px;
+      }
+      .info-value {
+        font-size: 18px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .info-value.winner {
+        font-size: 44px;
+        color: var(--neon-strike);
+        line-height: 1.05;
+        text-shadow: 0 0 12px rgba(226, 255, 0, 0.35);
+      }
+
+      /* Badge: positioned inside card bottom-right but outside main text due to padding above */
+      .badge-container {
+        position: absolute;
+        bottom: 12px;
+        right: 12px;
+        width: 100px;
+        height: 100px;
+        pointer-events: none;
+      }
+      .badge-circle {
+        width: 68px;
+        height: 68px;
+        border-radius: 50%;
+        background: #fff;
+        color: var(--midnight-court);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 900;
+        font-size: 18px;
+        margin-left: auto;
+        margin-top: auto;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .curved-text-svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .curved-text-svg text {
+        font-size: 12px;
+        fill: #fff;
+        font-weight: 800;
+        letter-spacing: 1px;
+      }
+
+      /* Controls panel below phone simulator */
+      .controls-panel {
+        width: 100%;
+        max-width: 420px;
+        background: linear-gradient(135deg, var(--midnight-court), #0f1217);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      }
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+      .control-label {
+        font-size: 11px;
+        color: #999;
+        text-transform: uppercase;
+      }
+      .file-input,
+      .text-input {
+        padding: 10px;
+        border-radius: 6px;
+        border: 1px solid var(--border-gray);
+        background: var(--secondary-gray);
+        color: var(--line-white);
+      }
+      .toggle-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .toggle-btn {
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid var(--border-gray);
+        background: transparent;
+        color: var(--line-white);
+        cursor: pointer;
+        font-weight: 700;
+      }
+      .toggle-btn.active {
+        background: var(--neon-strike);
+        color: #000;
+        box-shadow: 0 0 12px rgba(226, 255, 0, 0.28);
+      }
+      .slider-input {
+        width: 100%;
+      }
+
+      /* Responsive tweaks */
+      @media (max-width: 520px) {
+        body {
+          padding: 12px;
+        }
+        .padel-generator {
+          height: 720px;
+        }
+        .result-card {
+          padding: 26px 48px 48px 20px;
+        }
+        .badge-container {
+          width: 86px;
+          height: 86px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app-wrapper">
+      <div class="padel-generator">
+        <!-- SVG motion blur filter definition (kept small) -->
+        <svg
+          style="position: absolute; width: 0; height: 0; overflow: hidden"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <defs>
+            <filter id="motion-blur">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="0 0" />
+            </filter>
+          </defs>
+        </svg>
+
+        <div class="preview-container">
+          <img
+            id="user-image"
+            class="base-image"
+            src="https://images.unsplash.com/photo-1626224484214-4051d04474f3?q=80&w=1000&auto=format&fit=crop"
+            alt="Court preview"
+          />
+
+          <div id="filter-grain" class="overlay overlay-grain hidden"></div>
+          <div id="filter-grid" class="overlay overlay-grid hidden"></div>
+          <div id="filter-tint" class="overlay overlay-tint hidden"></div>
+
+          <div
+            class="result-card"
+            role="region"
+            aria-label="Result card preview"
+          >
+            <div class="card-inner">
+              <div class="info-group">
+                <div class="info-label">Name</div>
+                <div id="display-name" class="info-value player-name">
+                  PLAYER NAME
+                </div>
+              </div>
+
+              <div class="info-group">
+                <div class="info-label">Skill Level</div>
+                <div id="display-level" class="info-value">7 - ELITA</div>
+              </div>
+
+              <div class="info-group">
+                <div class="info-label">Result</div>
+                <div id="display-result" class="info-value winner">VICTORY</div>
+              </div>
+
+              <div class="badge-container" aria-hidden="true">
+                <svg class="curved-text-svg" viewBox="0 0 120 120">
+                  <path
+                    id="curve"
+                    d="M 15 70 A 45 45 0 1 1 105 70"
+                    fill="transparent"
+                  />
+                  <text>
+                    <textPath
+                      href="#curve"
+                      startOffset="50%"
+                      text-anchor="middle"
+                    >
+                      Matches Won
+                    </textPath>
+                  </text>
+                </svg>
+                <div id="badge-text" class="badge-circle">8/10</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls panel placed below the phone simulator -->
+      <div class="controls-panel" role="form" aria-label="Controls">
+        <div class="control-group">
+          <label class="control-label">Upload Court Image</label>
+          <input id="upload" type="file" accept="image/*" class="file-input" />
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Filter Controls</label>
+          <div class="toggle-grid">
+            <button id="btn-grain" class="toggle-btn" type="button">
+              Grain
+            </button>
+            <button id="btn-grid" class="toggle-btn" type="button">Grid</button>
+            <button id="btn-blur" class="toggle-btn" type="button">Blur</button>
+            <button id="btn-tint" class="toggle-btn" type="button">Tint</button>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label"
+            >Blur Intensity: <span id="blur-value">0</span></label
+          >
+          <input
+            id="blur-range"
+            class="slider-input"
+            type="range"
+            min="0"
+            max="10"
+            value="0"
+          />
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Player Name</label>
+          <input
+            id="name-input"
+            class="text-input"
+            type="text"
+            value="PLAYER NAME"
+          />
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Skill Level</label>
+          <input
+            id="level-input"
+            class="text-input"
+            type="text"
+            value="7 - ELITA"
+          />
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Match Result</label>
+          <select id="result-input" class="text-input">
+            <option>VICTORY</option>
+            <option>DEFEAT</option>
+            <option>DRAW</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Matches Won</label>
+          <input
+            id="matches-won-input"
+            class="text-input"
+            type="number"
+            min="0"
+            value="7"
+          />
+        </div>
+
+        <div class="control-group">
+          <label class="control-label">Total Matches Played</label>
+          <input
+            id="matches-total-input"
+            class="text-input"
+            type="number"
+            min="1"
+            value="10"
+          />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Single source of truth for filters & state
+      const state = {
+        filters: { grain: false, grid: false, blur: 0, tint: false },
+      };
+
+      // Elements
+      const userImage = document.getElementById("user-image");
+      const grainEl = document.getElementById("filter-grain");
+      const gridEl = document.getElementById("filter-grid");
+      const tintEl = document.getElementById("filter-tint");
+      const badgeText = document.getElementById("badge-text");
+
+      // Controls
+      const btnGrain = document.getElementById("btn-grain");
+      const btnGrid = document.getElementById("btn-grid");
+      const btnBlur = document.getElementById("btn-blur");
+      const btnTint = document.getElementById("btn-tint");
+      const blurRange = document.getElementById("blur-range");
+      const blurValue = document.getElementById("blur-value");
+
+      // Wire up toggles
+      btnGrain.addEventListener("click", () => toggleFilter("grain"));
+      btnGrid.addEventListener("click", () => toggleFilter("grid"));
+      btnBlur.addEventListener("click", () => toggleFilter("blur"));
+      btnTint.addEventListener("click", () => toggleFilter("tint"));
+
+      // Toggle function
+      function toggleFilter(name) {
+        if (name === "blur") {
+          // toggling blur to/from 0
+          state.filters.blur = state.filters.blur > 0 ? 0 : 3; // reasonable default on toggle
+          blurRange.value = state.filters.blur;
+          blurValue.textContent = state.filters.blur;
+          updateMotionBlur(state.filters.blur);
+        } else {
+          state.filters[name] = !state.filters[name];
+        }
+        applyFilters();
+        updateButtonVisuals();
+      }
+
+      // Blur slider
+      blurRange.addEventListener("input", (e) => {
+        const v = parseInt(e.target.value, 10) || 0;
+        state.filters.blur = v;
+        blurValue.textContent = v;
+        updateMotionBlur(v);
+        applyFilters();
+        updateButtonVisuals();
+      });
+
+      function updateMotionBlur(v) {
+        const fe = document.querySelector("#motion-blur feGaussianBlur");
+        if (fe) fe.setAttribute("stdDeviation", `${v * 2} 0`);
+      }
+
+      function applyFilters() {
+        // base aggressive color grading is applied via CSS on .base-image; add motion-blur filter if blur>0 using url(#motion-blur)
+        let filter = "brightness(.7) contrast(1.6) saturate(2.2)";
+        if (state.filters.blur > 0) filter += " url(#motion-blur)";
+        userImage.style.filter = filter;
+
+        // overlays
+        grainEl.classList.toggle("hidden", !state.filters.grain);
+        gridEl.classList.toggle("hidden", !state.filters.grid);
+        tintEl.classList.toggle("hidden", !state.filters.tint);
+      }
+
+      function updateButtonVisuals() {
+        btnGrain.classList.toggle("active", state.filters.grain);
+        btnGrid.classList.toggle("active", state.filters.grid);
+        btnTint.classList.toggle("active", state.filters.tint);
+        btnBlur.classList.toggle("active", state.filters.blur > 0);
+      }
+
+      // Update card text & badge
+      function updateCard() {
+        document.getElementById("display-name").textContent = (
+          document.getElementById("name-input").value || ""
+        ).toUpperCase();
+        document.getElementById("display-level").textContent = (
+          document.getElementById("level-input").value || ""
+        ).toUpperCase();
+        document.getElementById("display-result").textContent =
+          document.getElementById("result-input").value || "VICTORY";
+        const won =
+          parseInt(document.getElementById("matches-won-input").value, 10) || 0;
+        const tot = Math.max(
+          1,
+          parseInt(document.getElementById("matches-total-input").value, 10) ||
+            1,
+        );
+        badgeText.textContent = `${won}/${tot}`;
+      }
+
+      // File upload
+      document.getElementById("upload").addEventListener("change", (e) => {
+        const f = e.target.files && e.target.files[0];
+        if (!f) return;
+        const r = new FileReader();
+        r.onload = (ev) => {
+          userImage.src = ev.target.result;
+        };
+        r.readAsDataURL(f);
+      });
+
+      // Inputs change listeners
+      [
+        "name-input",
+        "level-input",
+        "result-input",
+        "matches-won-input",
+        "matches-total-input",
+      ].forEach((id) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener("input", updateCard);
+        el.addEventListener("change", updateCard);
+      });
+
+      // Init defaults
+      updateMotionBlur(0);
+      applyFilters();
+      updateButtonVisuals();
+      updateCard();
+    </script>
+  </body>
+</html>
